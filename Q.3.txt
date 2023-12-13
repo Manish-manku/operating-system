@@ -1,0 +1,85 @@
+i. Same program, same code:
+#include <iostream>
+#include <unistd.h>
+#include <sys/wait.h>
+
+int main() {
+    pid_t child_pid = fork();
+
+    if (child_pid == 0) {
+        // Child process
+        std::cout << "This is the child process with PID: " << getpid() << "\n";
+    } else if (child_pid > 0) {
+        // Parent process
+        std::cout << "This is the parent process with PID: " << getpid() << "\n";
+    } else {
+        perror("Fork failed");
+        return 1;
+    }
+
+    // Both parent and child execute the same code
+    std::cout << "Hello from process with PID: " << getpid() << "\n";
+
+    return 0;
+}
+
+
+ii. Same program, different code:
+
+#include <iostream>
+#include <unistd.h>
+#include <sys/wait.h>
+
+int main() {
+    pid_t child_pid = fork();
+
+    if (child_pid == 0) {
+        // Child process
+        std::cout << "This is the child process with PID: " << getpid() << "\n";
+        // Child-specific code
+    } else if (child_pid > 0) {
+        // Parent process
+        std::cout << "This is the parent process with PID: " << getpid() << "\n";
+        // Parent-specific code
+    } else {
+        perror("Fork failed");
+        return 1;
+    }
+
+    // Common code
+    std::cout << "Hello from process with PID: " << getpid() << "\n";
+
+    return 0;
+}
+
+(iii)  Parent waits for child:
+#include <iostream>
+#include <unistd.h>
+#include <sys/wait.h>
+
+int main() {
+    pid_t child_pid = fork();
+
+    if (child_pid == 0) {
+        // Child process
+        std::cout << "This is the child process with PID: " << getpid() << "\n";
+        // Child-specific code
+        sleep(2); // Simulating some task in the child
+    } else if (child_pid > 0) {
+        // Parent process
+        std::cout << "This is the parent process with PID: " << getpid() << "\n";
+        // Parent-specific code
+        waitpid(child_pid, NULL, 0); // Wait for the child to finish
+    } else {
+        perror("Fork failed");
+        return 1;
+    }
+
+    // Common code
+    std::cout << "Hello from process with PID: " << getpid() << "\n";
+
+    return 0;
+}
+
+
+
